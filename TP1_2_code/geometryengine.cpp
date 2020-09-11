@@ -154,16 +154,38 @@ void GeometryEngine::initPlaneGeometry() {
 
     VertexData vertices[256];
 
-    float paramX, paramY;
+    float paramX1, paramX2, paramY;
     int compteur = 0;
 
-    for(int i = 0; i < 16; i++) {
+    /*for(int i = 0; i < 16; i++) {
         paramX = (float)i / 16.0f;
         for(int j = 0; j < 16; j++) {
             paramY = (float)j / 16.0f;
             vertices[compteur] = {QVector3D(paramX, paramY, 1.0f), QVector2D((paramX + 1.0f) / 2.0f,(paramX + 1.0f) / 2.0f)};
             compteur++;
          }
+    }*/
+
+    for(int i = 0; i < 16; i+= 2) {
+        paramX1 = (float)i / 16;
+        paramX2 = (float)(i + 1) /16;
+        for(int j = 0; j < 16; j++) {
+            paramY = (float)j / 16.0f;
+            vertices[compteur] = {QVector3D(paramX1, paramY, 1.0f), QVector2D((paramX + 1.0f) / 2.0f,(paramY + 1.0f) / 2.0f)};
+            compteur++;
+            vertices[compteur] = {QVector3D(paramX2, paramY, 1.0f), QVector2D((paramX + 1.0f) / 2.0f,(paramY + 1.0f) / 2.0f)};
+            compteur++;
+        }
+
+        int compteur = 0;
+        GLushort indices[768];
+
+        for(int i = 0; i < 254; i++) {
+            indices[compteur] = i;
+            indices[compteur + 1] = i + 1;
+
+
+        }
     }
 }
 
