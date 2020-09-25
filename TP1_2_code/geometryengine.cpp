@@ -156,7 +156,7 @@ void GeometryEngine::initPlaneGeometry() {
 
     VertexData vertices[256]; //On a 256 sommets
 
-    float paramX1, paramX2, paramY; //Ces floats serviront de paramètres pour les coordonnées
+    //float paramX1, paramX2, paramY; //Ces floats serviront de paramètres pour les coordonnées
     int compteur = 0; //Le compteur servira à concaténer les sommets.
 
     /*for(int i = 0; i < 16; i++) {
@@ -168,9 +168,9 @@ void GeometryEngine::initPlaneGeometry() {
          }
     }*/
 
-    for(int i = 0; i < 8; i+= 2) { //On va déclarer deux sommets par colonne par itération, on va donc jusqu'à 8
-        paramX1 = (float)(i * 2) / 16;
-        paramX2 = (float)((i * 2) + 1) /16;
+    /*for(int i = 0; i < 8; i++) { //On va déclarer deux sommets par colonne par itération, on va donc jusqu'à 8
+        paramX1 = (float)(i * 2) / 16.0f;
+        paramX2 = (float)((i * 2) + 1) / 16.0f;
         for(int j = 0; j < 16; j++) { //On déclare une colonne par itération, donc on va jusqu'à 16
             paramY = (float)j / 16.0f;
             vertices[compteur] = {QVector3D(paramX1, paramY, 1.0f), QVector2D((paramX1 + 1.0f) / 2.0f,(paramY + 1.0f) / 2.0f)};
@@ -178,10 +178,26 @@ void GeometryEngine::initPlaneGeometry() {
             vertices[compteur] = {QVector3D(paramX2, paramY, 1.0f), QVector2D((paramX2 + 1.0f) / 2.0f,(paramY + 1.0f) / 2.0f)};
             compteur++;
         }
+    }*/
+
+    int dimensionX = 16; //Nombre de sommets par lignes
+    int dimensionY = 16; //Nombre de sommets par colonnes
+    int taille = dimensionX * dimensionY; //Nombre total de sommets
+
+    float paramX = 1.0f / (float)dimensionX; //Pas en X
+    float paramY = 1.0f / (float)dimensionY; //Pas en Y
+
+    for(int i = 0; i < dimensionX - 1; i+= 2) { //On génère deux sommets par itération, chacuns sur deux colonnes
+        for(int j = 0; j < dimensionY; j++) {
+            vertices[compteur] = {QVector3D(i * paramX, j * paramY, 1.0f), QVector2D((i * paramX + 1.0f) / 2.0f,(j * paramY + 1.0f) / 2.0f)};
+            compteur++;
+            vertices[compteur] = {QVector3D((i + 1) * paramX, j * paramY, 1.0f), QVector2D((i * paramX + 1.0f) / 2.0f,(j * paramY + 1.0f) / 2.0f)};
+            compteur++;
+        }
     }
 
     compteur = 0;
-    GLushort indices[768];
+    GLushort indices[270];
 
     /*for(int i = 0; i < 254; i++) {
             indices[compteur] = i;
@@ -190,16 +206,24 @@ void GeometryEngine::initPlaneGeometry() {
 
         }*/
 
-    for(int i = 0; i < 255; i++) {
+    for(int i = 0; i < taille; i++) { //On met les sommets dans l'ordre
         indices[compteur] = i;
         compteur++;
-        if(i % 16 == 0 && i > 0) {
+        if((i + 1) % (2 * dimensionY) == 0 && i > 0) { //A chaque changement de ligne on duplique le dernier sommet et le suivent
             indices[compteur] = i;
             compteur++;
-            indices[compteur] = i + 1;
-            compteur++;
+            if(i < 255) {
+                indices[compteur] = i + 1;
+                compteur++;
+            }
         }
     }
+
+    std::cout << compteur << std::endl;
+
+    for(int i = 0; i < 271; i++)
+        std::cout << indices[i] << " ";
+    std::cout << std::endl;
 
     // Transfer vertex data to VBO 0
     arrayBuf.bind();
@@ -207,7 +231,7 @@ void GeometryEngine::initPlaneGeometry() {
 
     // Transfer index data to VBO 1
     indexBuf.bind();
-    indexBuf.allocate(indices, compteur * sizeof(GLushort));
+    indexBuf.allocate(indices, 270 * sizeof(GLushort));
 }
 
 //! [2]
@@ -239,6 +263,8 @@ void GeometryEngine::drawCubeGeometry(QOpenGLShaderProgram *program)
 //! [2]
 void GeometryEngine::drawPlaneGeometry(QOpenGLShaderProgram *program)
 {
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     // Tell OpenGL which VBOs to use
     arrayBuf.bind();
     indexBuf.bind();
@@ -260,5 +286,5 @@ void GeometryEngine::drawPlaneGeometry(QOpenGLShaderProgram *program)
     program->setAttributeBuffer(texcoordLocation, GL_FLOAT, offset, 2, sizeof(VertexData));
 
     // Draw cube geometry using indices from VBO 1
-    glDrawElements(GL_TRIANGLE_STRIP, 285, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_TRIANGLE_STRIP, 270, GL_UNSIGNED_SHORT, 0);
 }
