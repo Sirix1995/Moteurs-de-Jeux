@@ -206,6 +206,9 @@ void GeometryEngine::initPlaneGeometry() {
 
         }*/
 
+
+    //Tu ne passes pas par les lignes du milieu avec ce for, tu dois le recoder pour obtenir le bon résultat !
+
     for(int i = 0; i < taille; i++) { //On met les sommets dans l'ordre
         indices[compteur] = i;
         compteur++;
