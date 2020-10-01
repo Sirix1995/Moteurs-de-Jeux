@@ -187,11 +187,13 @@ void GeometryEngine::initPlaneGeometry() {
     float paramX = 1.0f / (float)dimensionX; //Pas en X
     float paramY = 1.0f / (float)dimensionY; //Pas en Y
 
+    int random = std::rand() % 100;
+
     for(int i = 0; i < dimensionX - 1; i+= 2) { //On génère deux sommets par itération, chacuns sur deux colonnes
         for(int j = 0; j < dimensionY; j++) {
-            vertices[compteur] = {QVector3D(i * paramX, j * paramY, 1.0f), QVector2D((i * paramX + 1.0f) / 2.0f,(j * paramY + 1.0f) / 2.0f)};
+            vertices[compteur] = {QVector3D(i * paramX, j * paramY, (float)random * 0.01f), QVector2D((i * paramX + 1.0f) / 2.0f,(j * paramY + 1.0f) / 2.0f)};
             compteur++;
-            vertices[compteur] = {QVector3D((i + 1) * paramX, j * paramY, 1.0f), QVector2D((i * paramX + 1.0f) / 2.0f,(j * paramY + 1.0f) / 2.0f)};
+            vertices[compteur] = {QVector3D((i + 1) * paramX, j * paramY, (float)random * 0.01f), QVector2D((i * paramX + 1.0f) / 2.0f,(j * paramY + 1.0f) / 2.0f)};
             compteur++;
         }
     }
@@ -207,7 +209,7 @@ void GeometryEngine::initPlaneGeometry() {
         }*/
 
 
-    //Tu ne passes pas par les lignes du milieu avec ce for, tu dois le recoder pour obtenir le bon résultat !
+    //On trace la série de lignes facile à tracer
 
     for(int i = 0; i < taille; i++) { //On met les sommets dans l'ordre
         indices[compteur] = i;
@@ -220,6 +222,24 @@ void GeometryEngine::initPlaneGeometry() {
                 compteur++;
             }
         }
+    }
+
+    //On trace la série de ligne manquantes
+    int ligne1 = 1;
+    int ligne2 = 32;
+    for(int i =0; i < 8; i++) {
+        int depart1 = ligne1;
+        int depart2 = ligne2;
+        while(ligne1 < depart1 + 30) {
+            indices[compteur] = ligne1;
+            compteur++;
+            indices[compteur] = ligne2;
+            compteur++;
+            ligne1+= 2;
+            ligne2+= 2;
+        }
+        ligne1 = depart1 + 32;
+        ligne2 = depart2 + 32;
     }
 
     std::cout << compteur << std::endl;
