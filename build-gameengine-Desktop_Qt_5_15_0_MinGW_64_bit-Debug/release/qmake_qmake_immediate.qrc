@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+<file alias="sphere.off">E:/MoteurDeJeux/TP1_2_code/sphere.off</file>
+</qresource>
+</RCC>

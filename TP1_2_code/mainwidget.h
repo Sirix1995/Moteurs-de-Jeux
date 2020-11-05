@@ -62,6 +62,9 @@
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
 
+#include "objet.h"
+#include "espace.h"
+
 class GeometryEngine;
 
 class MainWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_1

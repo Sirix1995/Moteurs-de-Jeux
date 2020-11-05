@@ -54,6 +54,13 @@
 #include <QOpenGLFunctions_3_1>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLBuffer>
+#include "objet.h"
+
+struct VertexData
+{
+    QVector3D position;
+    QVector2D texCoord;
+};
 
 class GeometryEngine : protected QOpenGLFunctions_3_1
 {
@@ -63,13 +70,18 @@ public:
 
     void drawCubeGeometry(QOpenGLShaderProgram *program);
     void drawPlaneGeometry(QOpenGLShaderProgram *program);
+    void drawObjectGerometry(QOpenGLShaderProgram *program);
 
+    void initObjectGeometry(Objet unObjet);
 private:
     void initCubeGeometry();
     void initPlaneGeometry();
+    VertexData* sommetsToVertexData();
+    GLushort* indicesToTab();
 
     QOpenGLBuffer arrayBuf;
     QOpenGLBuffer indexBuf;
+    Objet obj;
 };
 
 #endif // GEOMETRYENGINE_H

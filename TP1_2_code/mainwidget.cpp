@@ -127,13 +127,13 @@ void MainWidget::initializeGL()
     initShaders();
     initTextures();
 
-//! [2]
+    //! [2]
     // Enable depth buffer
     glEnable(GL_DEPTH_TEST);
 
     // Enable back face culling
     glEnable(GL_CULL_FACE);
-//! [2]
+    //! [2]
 
     geometries = new GeometryEngine;
 
@@ -204,20 +204,26 @@ void MainWidget::paintGL()
 
     texture->bind();
 
-//! [6]
-    // Calculate model view transformation
+    //! [6]
+    /*// Calculate model view transformation
     QMatrix4x4 matrix;
     matrix.translate(0.0, 0.0, -5.0);
-    matrix.rotate(rotation);
+    matrix.rotate(rotation);*/
 
-    // Set modelview-projection matrix
-    program.setUniformValue("mvp_matrix", projection * matrix);
-//! [6]
+    Espace systemeSolaire = Espace();
+    Objet soleil = Objet(":sphere.off");
+    systemeSolaire.ajoutObjet(soleil);
 
-    // Use texture unit 0 which contains cube.png
-    program.setUniformValue("texture", 0);
+    vector<Objet*> lesObjets = systemeSolaire.getAllObjets();
+
+    for(int i = 0; i < lesObjets.size(); i++) {
+        program.setUniformValue("mvp_matrix", projection * lesObjets[i]->getTransformation());
+        program.setUniformValue("texture", 0);
+        geometries->initObjectGeometry(*lesObjets[i]);
+        geometries->drawObjectGerometry(&program);
+    }
 
     // Draw cube geometry
-    geometries->drawCubeGeometry(&program);
+    //geometries->drawCubeGeometry(&program);
     //geometries->drawPlaneGeometry(&program);
 }
